@@ -29,10 +29,9 @@ public class MyHashMap<K, V> extends AbstractMap<K, V> {
 
     @Override
     public V put(K key, V value) {
-        if (size >= table.length * LOAD_FACTOR) {
+        if (table.length == 0 || size >= table.length * LOAD_FACTOR) {
             resize();
         }
-
         int index = getBucketIndex(key);
         Node<K, V> head = table[index];
 
@@ -44,13 +43,13 @@ public class MyHashMap<K, V> extends AbstractMap<K, V> {
             }
             head = head.next;
         }
-
         Node<K, V> newNode = new Node<>(key, value);
         newNode.next = table[index];
         table[index] = newNode;
         size++;
         return null;
     }
+
 
     @Override
     public V get(Object key) {
@@ -108,13 +107,15 @@ public class MyHashMap<K, V> extends AbstractMap<K, V> {
     @SuppressWarnings("unchecked")
     private void resize() {
         Node<K, V>[] oldTable = table;
-        table = new Node[oldTable.length * 2];
-        size = 0;
-
+        int newCapacity = oldTable.length == 0 ? 16 : oldTable.length * 2;
+        table = new Node[newCapacity];
         for (Node<K, V> head : oldTable) {
             while (head != null) {
-                put(head.key, head.value);
-                head = head.next;
+                Node<K, V> next = head.next;
+                int newIndex = getBucketIndex(head.key);
+                head.next = table[newIndex];
+                table[newIndex] = head;
+                head = next;
             }
         }
     }
