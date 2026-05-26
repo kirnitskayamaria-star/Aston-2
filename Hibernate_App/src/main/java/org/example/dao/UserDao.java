@@ -1,5 +1,6 @@
 package org.example.dao;
 
+import lombok.NonNull;
 import org.example.config.HibernateUtil;
 import org.example.model.UserEntity;
 import org.hibernate.Session;
@@ -10,11 +11,12 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class UserDao {
     private static final Logger logger = LoggerFactory.getLogger(UserDao.class);
 
-    public boolean save(UserEntity user) {
+    public UserEntity save(@NonNull UserEntity user) {
         Transaction transaction = null;
         Session session = null;
         try {
@@ -23,7 +25,7 @@ public class UserDao {
             session.persist(user);
             transaction.commit();
             logger.info("Пользователь успешно сохранен: {}", user.getEmail());
-            return true;
+            return user;
         } catch (Exception e) {
             if (transaction != null && transaction.getStatus().canRollback() && session.isOpen()) {
                 try {
@@ -39,7 +41,7 @@ public class UserDao {
             } else {
                 logger.error("Ошибка при сохранении пользователя", e);
             }
-            return false;
+            throw e;
         } finally {
             if (session != null && session.isOpen()) {
                 session.close();
@@ -48,12 +50,13 @@ public class UserDao {
     }
 
 
-    public UserEntity findById(Integer id) {
+    public Optional <UserEntity> findById(@NonNull Integer id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.get(UserEntity.class, id);
+            UserEntity user = session.get(UserEntity.class, id);
+            return Optional.ofNullable(user);
         } catch (Exception e) {
             logger.error("Ошибка при поиске пользователя по ID: {}", id, e);
-            return null;
+            return Optional.empty();
         }
     }
 
@@ -66,7 +69,7 @@ public class UserDao {
         }
     }
 
-    public void update(UserEntity user) {
+    public void update(@NonNull UserEntity user) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
@@ -79,7 +82,7 @@ public class UserDao {
         }
     }
 
-    public void delete(Integer id) {
+    public void delete(@NonNull Integer id) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();

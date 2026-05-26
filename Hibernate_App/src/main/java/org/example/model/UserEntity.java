@@ -20,9 +20,11 @@ public class UserEntity {
     private Integer id;
 
     @Column(nullable = false, name = "user_name")
+    @NonNull
     private String name;
 
     @Column(nullable = false, unique = true, name = "user_email")
+    @NonNull
     private String email;
 
     @Column(name = "user_age")
@@ -31,7 +33,7 @@ public class UserEntity {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    public UserEntity(String name, String email, Integer age) {
+    public UserEntity(@NonNull String name, @NonNull String email, Integer age) {
         this.name = name;
         this.email = email;
         this.age = age;

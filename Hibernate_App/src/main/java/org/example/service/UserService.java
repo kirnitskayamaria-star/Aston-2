@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
 
@@ -17,7 +18,6 @@ public class UserService {
 
     public void createUser() {
         log.debug("\nСтарт метода createUser()");
-
         System.out.print("Введите имя: \n");
         String name = scanner.nextLine();
         System.out.print("Введите email: ");
@@ -65,10 +65,12 @@ public class UserService {
         log.debug("DTO успешно преобразован в Entity, отправка в DAO");
 
 
-        boolean isSaved = userDao.save(user);
-        if (!isSaved) {
+        try {
+            UserEntity savedUser = userDao.save(user);
+            System.out.println("\nПользователь успешно создан: " + savedUser);
+        } catch (Exception e) {
             log.error("Не удалось сохранить пользователя с email {}", email);
-            System.out.println("Не удалось создать пользователя. Возможно, такой email уже занят.");
+            System.out.println("Не удалось создать пользователя (возможно, email уже занят).");
         }
 
         log.debug("Завершение метода createUser()");
@@ -78,14 +80,21 @@ public class UserService {
         log.debug("\nСтарт метода readUser()");
 
         System.out.print("Введите ID пользователя: ");
-        int id = Integer.parseInt(scanner.nextLine());
-        UserEntity user = userDao.findById(id);
-        if (user != null) {
-            log.debug("DAO вернул пользователя с id {} ", user.getId());
-            System.out.println("Найден: " + user);
-        } else {
-            log.debug("Пользователь с id {} не найден.", id);
-            System.out.println("Пользователь с таким ID не найден.");
+        try {
+            int id = Integer.parseInt(scanner.nextLine());
+            Optional<UserEntity> userOptional = userDao.findById(id);
+            userOptional.ifPresentOrElse(
+                    user -> {
+                        log.debug("DAO вернул пользователя с id {} ");
+                        System.out.println("Найден: " + user);
+                    },
+                    () -> {
+                        log.debug("Пользователь с id {} не найден.", id);
+                        System.out.println("Пользователь с таким ID не найден.");
+                    }
+            );
+        } catch (NumberFormatException e) {
+            System.out.println("Ошибка: ID должен быть числом!");
         }
         log.debug("Завершение метода readUser()");
     }
@@ -108,29 +117,35 @@ public class UserService {
         log.debug("\nСтарт метода updateUser()");
 
         System.out.print("Введите ID пользователя для обновления: ");
-        int id = Integer.parseInt(scanner.nextLine());
-        UserEntity user = userDao.findById(id);
+        try {
+            int id = Integer.parseInt(scanner.nextLine());
+            Optional<UserEntity> userOptional = userDao.findById(id);
 
-        if (user == null) {
-            log.debug("Пользователь с id {} не найден.", id);
-            System.out.println("Пользователь не найден.");
-            return;
+            if (userOptional.isEmpty()) {
+                log.debug("Пользователь с id {} не найден.", id);
+                System.out.println("Пользователь не найден.");
+                return;
+            }
+            UserEntity user = userOptional.get();
+
+            System.out.print("Введите новое имя (оставьте пустым для пропуска): ");
+            String name = scanner.nextLine();
+            if (!name.isBlank()) user.setName(name);
+
+            System.out.print("Введите новый email (оставьте пустым для пропуска): ");
+            String email = scanner.nextLine();
+            if (!email.isBlank()) user.setEmail(email);
+
+            System.out.print("Введите новый возраст (или -1 для пропуска): ");
+            int age = Integer.parseInt(scanner.nextLine());
+            if (age != -1) user.setAge(age);
+
+            log.debug("Пользователь изменен.");
+            userDao.update(user);
+        } catch (NumberFormatException e) {
+
+            System.out.println("Введены неверные числовые данные.");
         }
-
-        System.out.print("Введите новое имя (оставьте пустым для пропуска): ");
-        String name = scanner.nextLine();
-        if (!name.isBlank()) user.setName(name);
-
-        System.out.print("Введите новый email (оставьте пустым для пропуска): ");
-        String email = scanner.nextLine();
-        if (!email.isBlank()) user.setEmail(email);
-
-        System.out.print("Введите новый возраст (или -1 для пропуска): ");
-        int age = Integer.parseInt(scanner.nextLine());
-        if (age != -1) user.setAge(age);
-
-        log.debug("Пользователь изменен.");
-        userDao.update(user);
 
         log.debug("Завершение метода updateUser()");
     }
@@ -138,15 +153,19 @@ public class UserService {
     public void deleteUser() {
         log.debug("\nСтарт метода deleteUser()");
         System.out.print("Введите ID пользователя для удаления: ");
-        int id = Integer.parseInt(scanner.nextLine());
-        UserEntity user = userDao.findById(id);
-        if (user != null) {
-            userDao.delete(id);
-            log.debug("Удаление пользователя с id {} ", id);
-            System.out.println("Пользователь удален.");
-        } else {
-            log.debug("Пользователь с id {} не найден.", id);
-            System.out.println("Пользователь с таким ID не найден.");
+        try {
+            int id = Integer.parseInt(scanner.nextLine());
+            Optional<UserEntity> userOptional = userDao.findById(id);
+            if (userOptional.isPresent()) {
+                userDao.delete(id);
+                log.debug("Удаление пользователя с id {} ", id);
+                System.out.println("Пользователь удален.");
+            } else {
+                log.debug("Пользователь с id {} не найден.", id);
+                System.out.println("Пользователь с таким ID не найден.");
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("ID должен быть числом!");
         }
         log.debug("Завершение метода deleteUser()");
 
