@@ -105,6 +105,26 @@ class UserDaoTests {
     }
 
     @Test
+    @DisplayName("update: Ошибка при попытке обновить email на уже существующий в БД")
+    void update_DuplicateEmail_ShouldNotModifyUser() {
+        UserEntity user1 = userDao.save(new UserEntity("Иван Петров", "ivan@example.com", 25));
+        UserEntity user2 = userDao.save(new UserEntity("Иван Семенов", "ivanS@example.com", 30));
+
+        user2.setEmail(user1.getEmail());
+        userDao.update(user2);
+
+        UserEntity updatedUser2 = userDao.findById(user2.getId()).orElseThrow();
+
+        assertEquals("ivanS@example.com", updatedUser2.getEmail(),
+                "Email не должен обновиться, так как транзакция обязана откатиться из-за дубликата");
+
+        assertEquals("Иван Семенов", updatedUser2.getName(),
+                "Остальные данные пользователя должны остаться нетронутыми");
+    }
+
+
+
+    @Test
     @DisplayName("delete: Полное удаление сущности из базы по ID")
     void delete_RemovesUserFromDatabase() {
         UserEntity user = userDao.save(new UserEntity("Удаляемый", "delete@example.com", 19));
