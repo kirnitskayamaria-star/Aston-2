@@ -1,6 +1,7 @@
 package org.example.service;
 
 import org.example.dto.UserDto;
+import org.example.mapper.MapToUserDto;
 import org.example.model.UserEntity;
 import org.example.repository.UserRepository;
 import org.springframework.http.HttpStatus;
@@ -9,30 +10,28 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
+    private final MapToUserDto mapper;
 
-
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, MapToUserDto mapper) {
         this.userRepository = userRepository;
+        this.mapper = mapper;
     }
 
     @Transactional(readOnly = true)
     public List<UserDto> getAllUsers() {
-        return userRepository.findAll().stream()
-                .map(this::convertToDto)
-                .collect(Collectors.toList());
+        return mapper.mapToListUserDto(userRepository.findAll());
     }
 
     @Transactional(readOnly = true)
     public UserDto getUserById(Integer id) {
         UserEntity entity = userRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь не найден"));
-        return convertToDto(entity);
+        return mapper.mapToUserDto(entity);
     }
 
     @Transactional
@@ -40,9 +39,9 @@ public class UserService {
         if (userRepository.existsByEmail(dto.getEmail())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Пользователь с таким email уже существует");
         }
-        UserEntity entity = convertToEntity(dto);
+        UserEntity entity = mapper.mapToUserEntity(dto);
         UserEntity saved = userRepository.save(entity);
-        return convertToDto(saved);
+        return mapper.mapToUserDto(saved);
     }
 
     @Transactional
@@ -58,7 +57,7 @@ public class UserService {
         entity.setEmail(dto.getEmail());
         entity.setAge(dto.getAge());
 
-        return convertToDto(userRepository.save(entity));
+        return mapper.mapToUserDto(userRepository.save(entity));
     }
 
     @Transactional
@@ -67,15 +66,5 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь не найден");
         }
         userRepository.deleteById(id);
-    }
-
-
-    private UserDto convertToDto(UserEntity entity) {
-        return new UserDto(entity.getId(), entity.getName(), entity.getEmail(), entity.getAge());
-    }
-
-
-    private UserEntity convertToEntity(UserDto dto) {
-        return new UserEntity(dto.getId(), dto.getName(), dto.getEmail(), dto.getAge(), null);
     }
 }
