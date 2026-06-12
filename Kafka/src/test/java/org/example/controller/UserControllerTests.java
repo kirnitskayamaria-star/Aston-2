@@ -28,6 +28,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Testcontainers
 class UserControllerTests {
 
+    static {
+        System.setProperty("net.bytebuddy.experimental", "true");
+    }
     @Container
     private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15-alpine")
             .withDatabaseName("integration_test_db")
@@ -36,6 +39,9 @@ class UserControllerTests {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @org.springframework.boot.test.mock.mockito.MockBean
+    private org.springframework.kafka.core.KafkaTemplate<String, org.example.dto.UserEventDto> kafkaTemplate;
 
     @Autowired
     private UserRepository userRepository;
