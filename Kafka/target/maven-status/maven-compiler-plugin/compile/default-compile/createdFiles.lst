@@ -1,7 +1,0 @@
-org/example/dto/UserDto.class
-org/example/repository/UserRepository.class
-org/example/model/UserEntity.class
-org/example/model/UserEntity$UserEntityBuilder.class
-org/example/App.class
-org/example/service/UserService.class
-org/example/controller/UserController.class
