@@ -4,25 +4,45 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import org.springframework.hateoas.RepresentationModel;
 
+@Schema(description = "Data Transfer Object for User information with HATEOAS support")
 public class UserDto extends RepresentationModel<UserDto> {
 
-    @Schema(example = "1", accessMode = Schema.AccessMode.READ_ONLY)
+    @Schema(
+            description = "Unique identifier of the user",
+            example = "1",
+            accessMode = Schema.AccessMode.READ_ONLY
+    )
     private Integer id;
 
-    @NotBlank(message = "Имя не может быть пустым")
-    @Schema(example = "Иван Иванов")
+    @NotBlank(message = "Name cannot be blank")
+    @Schema(
+            description = "Full name of the user",
+            example = "Ivan Ivanov",
+            requiredMode = Schema.RequiredMode.REQUIRED
+    )
     private String name;
 
-    @Email(message = "Некорректный формат email")
-    @NotBlank(message = "Email не может быть пустым")
-    @Schema(example = "ivan@example.com")
+    @Email(message = "Incorrect Email")
+    @NotBlank(message = "Email cannot be blank")
+    @Schema(
+            description = "Unique email address of the user",
+            example = "ivan@example.com",
+            requiredMode = Schema.RequiredMode.REQUIRED
+    )
     private String email;
 
-    @Min(value = 0, message = "Возраст должен быть от 0 до 120 лет")
-    @Max(value = 120, message = "Возраст должен быть от 0 до 120 лет")
-    @NotNull(message = "Возраст обязателен для заполнения")
-    @Schema(example = "25")
+    @Min(value = 0, message = "Age must be from 0 to 120 years old")
+    @Max(value = 120, message = "Age must be from 0 to 120 years old")
+    @NotNull(message = "Age cannot be blank")
+    @Schema(
+            description = "Age of the user",
+            example = "25",
+            minimum = "0",
+            maximum = "120",
+            requiredMode = Schema.RequiredMode.REQUIRED
+    )
     private Integer age;
+
     public UserDto() {}
 
     public UserDto(Integer id, String name, String email, Integer age) {
