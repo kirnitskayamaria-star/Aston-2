@@ -1,9 +1,9 @@
-package org.example.controller;
+package org.example.user.controller;
 
 import jakarta.validation.Valid;
-import org.example.assembler.UserModelAssembler;
-import org.example.dto.UserDto;
-import org.example.service.UserService;
+import org.example.user.assembler.UserModelAssembler;
+import org.example.user.dto.UserDto;
+import org.example.user.service.UserService;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;

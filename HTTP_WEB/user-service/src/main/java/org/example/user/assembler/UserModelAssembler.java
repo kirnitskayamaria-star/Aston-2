@@ -1,7 +1,7 @@
-package org.example.assembler;
+package org.example.user.assembler;
 
-import org.example.controller.UserController;
-import org.example.dto.UserDto;
+import org.example.user.controller.UserController;
+import org.example.user.dto.UserDto;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;

@@ -1,17 +1,14 @@
-package org.example.mapper;
+package org.example.user.mapper;
 
-import org.example.dto.UserDto;
-import org.example.model.UserEntity;
+import org.example.user.dto.UserDto;
+import org.example.user.model.UserEntity;
 import org.springframework.stereotype.Component;
-
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
-public class MapToUserDto {
+public class UserMapper {
 
-
-    public UserDto mapToUserDto(UserEntity entity) {
+    public UserDto toDto(UserEntity entity) {
         if (entity == null) {
             return null;
         }
@@ -23,16 +20,16 @@ public class MapToUserDto {
         return dto;
     }
 
-    public List<UserDto> mapToListUserDto(List<UserEntity> entities) {
+    public List<UserDto> toDtoList(List<UserEntity> entities) {
         if (entities == null) {
             return List.of();
         }
         return entities.stream()
-                .map(this::mapToUserDto)
-                .collect(Collectors.toList());
+                .map(this::toDto)
+                .toList();
     }
 
-    public UserEntity mapToUserEntity(UserDto dto) {
+    public UserEntity toEntity(UserDto dto) {
         if (dto == null) {
             return null;
         }

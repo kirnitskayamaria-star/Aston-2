@@ -1,12 +1,14 @@
-package org.example.service;
+package org.example.user.service;
 
-import org.example.dto.UserDto;
-import org.example.mapper.MapToUserDto;
-import org.example.model.UserEntity;
-import org.example.repository.UserRepository;
+import org.example.user.dto.UserDto;
+import org.example.user.mapper.UserMapper;
+import org.example.user.model.UserEntity;
+import org.example.user.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -15,23 +17,25 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final MapToUserDto mapper;
+    private final UserMapper mapper;
+    private final UserEventPublisher eventPublisher;
 
-    public UserService(UserRepository userRepository, MapToUserDto mapper) {
+    public UserService(UserRepository userRepository, UserMapper mapper, UserEventPublisher eventPublisher) {
         this.userRepository = userRepository;
         this.mapper = mapper;
+        this.eventPublisher = eventPublisher;
     }
 
     @Transactional(readOnly = true)
     public List<UserDto> getAllUsers() {
-        return mapper.mapToListUserDto(userRepository.findAll());
+        return mapper.toDtoList(userRepository.findAll());
     }
 
     @Transactional(readOnly = true)
     public UserDto getUserById(Integer id) {
         UserEntity entity = userRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь не найден"));
-        return mapper.mapToUserDto(entity);
+        return mapper.toDto(entity);
     }
 
     @Transactional
@@ -39,9 +43,16 @@ public class UserService {
         if (userRepository.existsByEmail(dto.getEmail())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Пользователь с таким email уже существует");
         }
-        UserEntity entity = mapper.mapToUserEntity(dto);
+        UserEntity entity = mapper.toEntity(dto);
         UserEntity saved = userRepository.save(entity);
-        return mapper.mapToUserDto(saved);
+
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                eventPublisher.publishEvent("CREATE", saved.getEmail());
+            }
+        });
+        return mapper.toDto(saved);
     }
 
     @Transactional
@@ -52,19 +63,25 @@ public class UserService {
         if (userRepository.existsByEmailAndIdNot(dto.getEmail(), id)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Email уже занят другим пользователем");
         }
-
         entity.setName(dto.getName());
         entity.setEmail(dto.getEmail());
         entity.setAge(dto.getAge());
-
-        return mapper.mapToUserDto(userRepository.save(entity));
+        return mapper.toDto(userRepository.save(entity));
     }
 
     @Transactional
     public void deleteUser(Integer id) {
-        if (!userRepository.existsById(id)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь не найден");
-        }
+        UserEntity entity = userRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь не найден"));
+
+        String email = entity.getEmail();
         userRepository.deleteById(id);
+
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                eventPublisher.publishEvent("DELETE", email);
+            }
+        });
     }
 }

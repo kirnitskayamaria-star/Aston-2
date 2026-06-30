@@ -1,9 +1,9 @@
 package org.example.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.example.dto.UserDto;
-import org.example.model.UserEntity;
-import org.example.repository.UserRepository;
+import org.example.user.dto.UserDto;
+import org.example.user.model.UserEntity;
+import org.example.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
