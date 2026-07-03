@@ -1,0 +1,4 @@
+org/example/notification/service/EmailService.class
+org/example/notification/dto/UserEventDto.class
+org/example/notification/kafka/NotificationListener.class
+org/example/notification/NotificationApplication.class

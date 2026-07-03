@@ -1,0 +1,10 @@
+/Users/mariakirnitskaya/IdeaProjects/Aston-2/HTTP_WEB/user-service/src/main/java/org/example/user/model/UserEntity.java
+/Users/mariakirnitskaya/IdeaProjects/Aston-2/HTTP_WEB/user-service/src/main/java/org/example/user/service/UserEventPublisher.java
+/Users/mariakirnitskaya/IdeaProjects/Aston-2/HTTP_WEB/user-service/src/main/java/org/example/user/mapper/UserMapper.java
+/Users/mariakirnitskaya/IdeaProjects/Aston-2/HTTP_WEB/user-service/src/main/java/org/example/user/assembler/UserModelAssembler.java
+/Users/mariakirnitskaya/IdeaProjects/Aston-2/HTTP_WEB/user-service/src/main/java/org/example/user/controller/UserController.java
+/Users/mariakirnitskaya/IdeaProjects/Aston-2/HTTP_WEB/user-service/src/main/java/org/example/user/dto/UserEventDto.java
+/Users/mariakirnitskaya/IdeaProjects/Aston-2/HTTP_WEB/user-service/src/main/java/org/example/user/dto/UserDto.java
+/Users/mariakirnitskaya/IdeaProjects/Aston-2/HTTP_WEB/user-service/src/main/java/org/example/user/service/UserService.java
+/Users/mariakirnitskaya/IdeaProjects/Aston-2/HTTP_WEB/user-service/src/main/java/org/example/App.java
+/Users/mariakirnitskaya/IdeaProjects/Aston-2/HTTP_WEB/user-service/src/main/java/org/example/user/repository/UserRepository.java

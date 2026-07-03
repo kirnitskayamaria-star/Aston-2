@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="org.example.controller.UserControllerTests" time="0.005" tests="6" errors="0" skipped="6" failures="0">
+  <properties/>
+  <testcase name="getAllUsers_Success" classname="org.example.controller.UserControllerTests" time="0.0">
+    <skipped message="class org.example.controller.UserControllerTests is @Disabled"/>
+  </testcase>
+  <testcase name="createUser_Success" classname="org.example.controller.UserControllerTests" time="0.0">
+    <skipped message="class org.example.controller.UserControllerTests is @Disabled"/>
+  </testcase>
+  <testcase name="deleteUser_Success" classname="org.example.controller.UserControllerTests" time="0.0">
+    <skipped message="class org.example.controller.UserControllerTests is @Disabled"/>
+  </testcase>
+  <testcase name="updateUser_Success" classname="org.example.controller.UserControllerTests" time="0.0">
+    <skipped message="class org.example.controller.UserControllerTests is @Disabled"/>
+  </testcase>
+  <testcase name="updateUser_EmailConflict_ThrowsConflictStatus" classname="org.example.controller.UserControllerTests" time="0.0">
+    <skipped message="class org.example.controller.UserControllerTests is @Disabled"/>
+  </testcase>
+  <testcase name="createUser_ValidationError" classname="org.example.controller.UserControllerTests" time="0.0">
+    <skipped message="class org.example.controller.UserControllerTests is @Disabled"/>
+  </testcase>
+</testsuite>
