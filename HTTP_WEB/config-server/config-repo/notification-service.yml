@@ -1,8 +1,9 @@
 server:
-  port: 8081
+  port: 8082
+
 spring:
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: kafka:9092
     consumer:
       group-id: notification-group
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
@@ -11,7 +12,7 @@ spring:
         spring.json.trusted.packages: "*"
         spring.json.value.default.type: "org.example.notification.dto.UserEventDto"
   mail:
-    host: ://gmail.com
+    host: smtp.gmail.com
     port: 587
     username: your-email@gmail.com
     password: your-app-password
@@ -21,3 +22,10 @@ spring:
           auth: true
           starttls:
             enable: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka/
+  instance:
+    prefer-ip-address: true
