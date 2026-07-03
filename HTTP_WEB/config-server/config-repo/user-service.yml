@@ -1,4 +1,5 @@
-spring:
+  docker-compose down && docker-compose up
+  spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/user_service_db
     username: postgres
